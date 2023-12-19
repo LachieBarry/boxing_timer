@@ -1,0 +1,9 @@
+<%= form_with model: [@workout, @round] do |f| %>
+  <%= f.label :combo %>
+  <%= f.text_field :combo %>
+  <%= f.label :work_time %>
+  <%= f.number_field :work_time %>
+  <%= f.label :rest_time %>
+  <%= f.number_field :rest_time %>
+  <%= f.submit %>
+<% end %>

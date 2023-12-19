@@ -10,9 +10,19 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2023_12_19_053521) do
+ActiveRecord::Schema[7.1].define(version: 2023_12_19_091522) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
+
+  create_table "rounds", force: :cascade do |t|
+    t.integer "work_time"
+    t.integer "rest_time"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.string "combo"
+    t.bigint "workout_id"
+    t.index ["workout_id"], name: "index_rounds_on_workout_id"
+  end
 
   create_table "workouts", force: :cascade do |t|
     t.string "name"
@@ -20,4 +30,5 @@ ActiveRecord::Schema[7.1].define(version: 2023_12_19_053521) do
     t.datetime "updated_at", null: false
   end
 
+  add_foreign_key "rounds", "workouts"
 end
