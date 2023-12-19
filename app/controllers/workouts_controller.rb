@@ -33,7 +33,8 @@ class WorkoutsController < ApplicationController
   end
 
   def destroy
-
+    @workout.destroy
+    redirect_to workouts_path, status: :see_other
   end
 
   private
