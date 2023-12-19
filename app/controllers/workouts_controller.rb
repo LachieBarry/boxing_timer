@@ -21,6 +21,21 @@ class WorkoutsController < ApplicationController
     end
   end
 
+  def edit
+  end
+
+  def update
+    if @workout.update(workout_params)
+      redirect_to workout_path(@workout.id)
+    else
+      render 'new', status: :unprocessable_entity
+    end
+  end
+
+  def destroy
+
+  end
+
   private
 
   def workout_params
