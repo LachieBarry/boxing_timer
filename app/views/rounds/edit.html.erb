@@ -1,0 +1,3 @@
+<h2>Edit Round</h2>
+<%= render "round_form", round: [@workout, @round] %>
+<p> <%= link_to "Back", workout_rounds_path(params[:workout_id], params[:id]) %> </p>

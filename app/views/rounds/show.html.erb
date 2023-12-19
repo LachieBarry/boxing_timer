@@ -1,0 +1,4 @@
+<h2> <%= @round.combo %> </h2>
+<p> <%= link_to "Back", workout_rounds_path(params[:workout_id]) %> </p>
+<p> <%= link_to "Edit", edit_workout_round_path(params[:workout_id], params[:id]) %> </p>
+<p> <%= link_to "Delete", workout_round_path(params[:workout_id], params[:id]), data: {turbo_method: :delete, confirm: "Are you sure?"} %> </p>

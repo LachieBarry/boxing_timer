@@ -1,0 +1,6 @@
+<h2>All Workouts</h2>
+<p> <%= link_to "New Timer", new_workout_round_path(params[:workout_id]) %> </p>
+<% @rounds.each do |round| %>
+  <p> <%= link_to round.combo, workout_round_path(params[:workout_id], round.id) %> </p>
+<% end %>
+<p> <%= link_to "Back", workouts_path %> </p>
