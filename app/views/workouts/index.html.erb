@@ -1,0 +1,5 @@
+<h2>All Workouts</h2>
+<p> <%= link_to "New", new_workout_path %> </p>
+<% @workouts.each do |workout| %>
+  <p> <%= link_to workout.name, workout_path(workout.id) %> </p>
+<% end %>

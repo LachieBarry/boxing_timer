@@ -1,0 +1,4 @@
+<h2> <%= @workout.name %> </h2>
+<p> <%= link_to "Index", workouts_path %> </p>
+<p> <%= link_to "Edit", edit_workout_path(@workout.id) %> </p>
+<p> <%= link_to "Delete", workout_path(@workout.id), data: {turbo_method: :delete, confirm: "Are you sure?"} %> </p>
