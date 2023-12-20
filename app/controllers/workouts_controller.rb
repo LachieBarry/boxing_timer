@@ -1,11 +1,19 @@
 class WorkoutsController < ApplicationController
-  before_action :set_workout, only: [:show, :edit, :update, :destroy]
+  before_action :set_workout, only: [:show, :edit, :update, :destroy, :start]
 
   def index
     @workouts = Workout.all
   end
 
   def show
+  end
+
+  def start
+    @rounds = Round.where(workout_id: @workout.id)
+    respond_to do |format|
+      format.html
+      format.json { render json: @rounds }
+    end
   end
 
   def new

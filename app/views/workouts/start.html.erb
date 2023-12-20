@@ -1,0 +1,20 @@
+<button id="start" type="button">Start!</button>
+
+  <script>
+  const allRounds = <%= raw @rounds.to_json %>;
+
+  allRounds.forEach((round) => {
+    const logDone = () => {
+      console.log("done")
+    };
+    window.setTimeout(logDone, (round.work_time * 1000));
+    window.setTimeout(logDone, (round.rest_time * 1000));
+  });
+  </script>
+
+
+          <%# const comboNames = new Array() %>
+
+      <%# <% @rounds.each do |round| %>
+        <%# comboNames.push( <%= round.combo %>
+      <%# <% end %>
