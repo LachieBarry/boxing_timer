@@ -9,7 +9,7 @@ const allRounds = <%= raw @rounds.to_json %>;
 
 function runRound(roundIndex, phase) {
   const round = allRounds[roundIndex];
-  let count = (phase === 'work') ? round.work_time * 1 : round.rest_time * 1;
+  let count = (phase === 'work') ? round.work_time * 100 : round.rest_time * 100;
   console.log(round.combo)
 
   const timer = setInterval(function() {
