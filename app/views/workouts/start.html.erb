@@ -9,7 +9,8 @@ const allRounds = <%= raw @rounds.to_json %>;
 
 function runRound(roundIndex, phase) {
   const round = allRounds[roundIndex];
-  let count = (phase === 'work') ? round.work_time * 100 : round.rest_time * 100;
+  let count = (phase === 'work') ? round.work_time * 1 : round.rest_time * 1;
+  console.log(round.combo)
 
   const timer = setInterval(function() {
     count--;
@@ -21,7 +22,9 @@ function runRound(roundIndex, phase) {
 
       // Move to the next phase or round if available
       if (phase === 'work') {
+        if (roundIndex !== allRounds.length - 1) {
         setTimeout(() => runRound(roundIndex, 'rest'), 10); // Start resting after 1000ms (adjust as needed)
+        }
       } else {
         if (roundIndex < allRounds.length - 1) {
           setTimeout(() => runRound(roundIndex + 1, 'work'), 10); // Start working after 1000ms (adjust as needed)
