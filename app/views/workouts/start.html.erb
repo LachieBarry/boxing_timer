@@ -1,18 +1,40 @@
 <button id="start" type="button">Start!</button>
 
-  <script>
-  const allRounds = <%= raw @rounds.to_json %>;
 
-  allRounds.forEach((round) => {
-    const logDone = () => {
-      console.log("done")
-    };
-    window.setTimeout(logDone, (round.work_time * 1000));
-    window.setTimeout(logDone, (round.rest_time * 1000));
-  });
-  </script>
+<script>
+const allRounds = <%= raw @rounds.to_json %>;
+</script>
 
+<script>
 
+function runRound(roundIndex, phase) {
+  const round = allRounds[roundIndex];
+  let count = (phase === 'work') ? round.work_time * 100 : round.rest_time * 100;
+
+  const timer = setInterval(function() {
+    count--;
+    console.log(count);
+
+    if (count === 0) {
+      clearInterval(timer);
+      console.log(`Time's up for ${phase} phase!`);
+
+      // Move to the next phase or round if available
+      if (phase === 'work') {
+        setTimeout(() => runRound(roundIndex, 'rest'), 10); // Start resting after 1000ms (adjust as needed)
+      } else {
+        if (roundIndex < allRounds.length - 1) {
+          setTimeout(() => runRound(roundIndex + 1, 'work'), 10); // Start working after 1000ms (adjust as needed)
+        }
+      }
+    }
+  }, 10);
+}
+
+// Start the first working timer
+runRound(0, 'work');
+
+</script>
           <%# const comboNames = new Array() %>
 
       <%# <% @rounds.each do |round| %>
