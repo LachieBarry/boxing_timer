@@ -1,5 +1,9 @@
 <button id="start" type="button">Start!</button>
 
+<div><p id="combo"> </p></div>
+<div><p id="phase"> </p></div>
+<div><p id="timer"> </p></div>
+<div><p id="progress"> </p></div>
 
 <script>
 const allRounds = <%= raw @rounds.to_json %>;
@@ -9,12 +13,26 @@ const allRounds = <%= raw @rounds.to_json %>;
 
 function runRound(roundIndex, phase) {
   const round = allRounds[roundIndex];
+  const timerDisplay = document.querySelector("#timer");
+  const phaseDisplay = document.querySelector("#phase");
+  const comboDisplay = document.querySelector("#combo");
+  const progressDisplay = document.querySelector("#progress");
+
   let count = (phase === 'work') ? round.work_time * 100 : round.rest_time * 100;
-  console.log(round.combo)
 
   const timer = setInterval(function() {
+    let progress = (phase === 'work') ? (count / round.work_time).toFixed(2) : (count / round.rest_time).toFixed(2);
+
     count--;
-    console.log((count / 100).toFixed(2));
+    comboDisplay.innerText = round.combo;
+    phaseDisplay.innerText = phase;
+    timerDisplay.innerText = (count / 100).toFixed(2);
+    phaseDisplay.innerText = phase;
+    progressDisplay.innerText = `${progress}%`;
+
+    console.log(progress)
+    console.log(count)
+    console.log(round.work_time * 100)
 
     if (count === 0) {
       clearInterval(timer);
@@ -32,6 +50,19 @@ function runRound(roundIndex, phase) {
       }
     }
   }, 10);
+}
+
+function pauseRound(roundIndex, phase) {
+// save value in the timer
+// save phase
+// clearInterval
+// change display to paused + the stored time
+}
+
+function resumeRound(roundIndex, phase, pausedTime) {
+// run one interval with pausedTime
+// start timers + phase from where
+// >> runTimer function and pass the next phase and round index!
 }
 
 // Start the first working timer
