@@ -48,12 +48,14 @@ function runRound(roundIndex, phase, countStart) {
   const round = allRounds[roundIndex];
   const comboSpeech = new SpeechSynthesisUtterance();
   const restSpeech = new SpeechSynthesisUtterance();
+  const finishSpeech = new SpeechSynthesisUtterance();
 
   console.log(round);
   console.log(roundIndex)
 
   countStart === 0 ? (count = ((phase === 'work') ? round.work_time * 100 : round.rest_time * 100)) : count = countStart;
 
+  finishSpeech.text = "Workout Complete!"
   restSpeech.text = "rest"
   comboSpeech.text = `${round.combo}`;
   phase === "work" ? window.speechSynthesis.speak(comboSpeech) : window.speechSynthesis.speak(restSpeech);
@@ -87,6 +89,7 @@ function runRound(roundIndex, phase, countStart) {
           setTimeout(() => runRound(roundIndex, 'rest', 0), 10); // Start resting after 1000ms (adjust as needed)
         } else if (roundIndex === allRounds.length - 1) {
           console.log("FINISHED")
+          window.speechSynthesis.speak(finishSpeech)
           phaseDisplay.innerText = "workout complete";
           progressDisplay.innerText = "0%";
           pauseButton.classList.toggle("hide")
