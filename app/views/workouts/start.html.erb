@@ -1,6 +1,10 @@
 <button id="start" type="button">Start!</button>
 <button id="pause" type="button">Pause!</button>
+<button id="resume" type="button">Resume!</button>
+<button id="reset" type="button">Reset Round!</button>
+<button id="reset-all" type="button">Reset Workout!</button>
 
+<div><p id="round-hidden" class="hide"> </p></div>
 <div><p id="round"> </p></div>
 <div><p id="combo"> </p></div>
 <div><p id="phase"> </p></div>
@@ -10,6 +14,7 @@
 <script>
 const allRounds = <%= raw @rounds.to_json %>;
 const roundDisplay = document.querySelector("#round");
+const roundIndexHidden = document.querySelector("#round-hidden");
 const timerDisplay = document.querySelector("#timer");
 const phaseDisplay = document.querySelector("#phase");
 const comboDisplay = document.querySelector("#combo");
@@ -17,31 +22,36 @@ const progressDisplay = document.querySelector("#progress");
 
 const startButton = document.querySelector("#start");
 const pauseButton = document.querySelector("#pause");
+const resumeButton = document.querySelector("#resume");
+const resetButton = document.querySelector("#reset");
+const resetAllButton = document.querySelector("#reset-all");
 </script>
+
 
 <script>
 
-function runRound(roundIndex, phase) {
+
+
+function runRound(roundIndex, phase, countStart) {
   const round = allRounds[roundIndex];
 
 
 
-  let count = (phase === 'work') ? round.work_time * 100 : round.rest_time * 100;
+  countStart === 0 ? (count = ((phase === 'work') ? round.work_time * 100 : round.rest_time * 100)) : count = countStart;
 
-  const timer = setInterval(function() {
+
+
+  let timer = setInterval(function() {
     let progress = (phase === 'work') ? (count / round.work_time).toFixed(2) : (count / round.rest_time).toFixed(2);
     let currentRound = round
 
     count--;
+    roundDisplay.innerText = `Round ${roundIndex + 1}`;
+    roundIndexHidden.innerText = roundIndex;
     comboDisplay.innerText = round.combo;
     phaseDisplay.innerText = phase;
     timerDisplay.innerText = (count / 100).toFixed(2);
     progressDisplay.innerText = `${progress}%`;
-
-
-    console.log(progress)
-    console.log(count)
-    console.log(round.work_time * 100)
 
     if (count === 0) {
       clearInterval(timer);
@@ -58,45 +68,61 @@ function runRound(roundIndex, phase) {
         }
       }
     }
+
+
+
+
     pauseButton.addEventListener("click", (event) => {
       console.log("clicked");
+      console.log("clearing");
       clearInterval(timer);
       console.log("done");
     });
-
   }, 10);
 
-  function pauseRound() {
-  // clearInterval
-  // save value in the timer
-  // save phase
 
 
 
-  // change display to paused + the stored time
-  };
 }
 
-function pauseRound() {
-  // clearInterval
-  // save value in the timer
-  // save phase
-  clearInterval(timer)
-  let savedPhase = phaseDisplay.innerText
-  let savedCount = timerDisplay.innerText
-  console.log(round)
+resumeButton.addEventListener("click", (event) => {
+    console.log("clicked");
 
-  // change display to paused + the stored time
-}
+    // need something to reset!
 
-function resumeRound(roundIndex, phase, pausedTime) {
-// run one interval with pausedTime
-// start timers + phase from where
-// >> runTimer function and pass the next phase and round index!
-}
+    let roundStart = document.querySelector("#round-hidden").innerText;
+    let phaseStart = document.querySelector("#phase").innerText;
+    let countStart = document.querySelector("#timer").innerText * 100;
+    runRound(roundStart, phaseStart, countStart);
 
-// Start the first working timer
-runRound(0, 'work');
+
+    console.log("resuming");
+  });
+
+startButton.addEventListener("click", (event) => {
+  console.log("clicked");
+  runRound(0, 'work', 0);
+  startButton.classList.toggle("hide")
+  console.log("done");
+});
+
+  resetButton.addEventListener("click", (event) => {
+    console.log("clicked");
+
+    let roundStart = document.querySelector("#round-hidden").innerText;
+    let phaseStart = document.querySelector("#phase").innerText;
+
+    clearInterval(timer);
+    runRound(roundStart, phaseStart, 0);
+    console.log("done");
+  });
+
+  resetAllButton.addEventListener("click", (event) => {
+    clearInterval(timer);
+    runRound(0, 'work', 0);
+    console.log("done");
+  });
+
 
 </script>
           <%# const comboNames = new Array() %>
