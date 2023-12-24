@@ -1,5 +1,7 @@
 <button id="start" type="button">Start!</button>
+<button id="pause" type="button">Pause!</button>
 
+<div><p id="round"> </p></div>
 <div><p id="combo"> </p></div>
 <div><p id="phase"> </p></div>
 <div><p id="timer"> </p></div>
@@ -7,28 +9,35 @@
 
 <script>
 const allRounds = <%= raw @rounds.to_json %>;
+const roundDisplay = document.querySelector("#round");
+const timerDisplay = document.querySelector("#timer");
+const phaseDisplay = document.querySelector("#phase");
+const comboDisplay = document.querySelector("#combo");
+const progressDisplay = document.querySelector("#progress");
+
+const startButton = document.querySelector("#start");
+const pauseButton = document.querySelector("#pause");
 </script>
 
 <script>
 
 function runRound(roundIndex, phase) {
   const round = allRounds[roundIndex];
-  const timerDisplay = document.querySelector("#timer");
-  const phaseDisplay = document.querySelector("#phase");
-  const comboDisplay = document.querySelector("#combo");
-  const progressDisplay = document.querySelector("#progress");
+
+
 
   let count = (phase === 'work') ? round.work_time * 100 : round.rest_time * 100;
 
   const timer = setInterval(function() {
     let progress = (phase === 'work') ? (count / round.work_time).toFixed(2) : (count / round.rest_time).toFixed(2);
+    let currentRound = round
 
     count--;
     comboDisplay.innerText = round.combo;
     phaseDisplay.innerText = phase;
     timerDisplay.innerText = (count / 100).toFixed(2);
-    phaseDisplay.innerText = phase;
     progressDisplay.innerText = `${progress}%`;
+
 
     console.log(progress)
     console.log(count)
@@ -49,14 +58,35 @@ function runRound(roundIndex, phase) {
         }
       }
     }
+    pauseButton.addEventListener("click", (event) => {
+      console.log("clicked");
+      clearInterval(timer);
+      console.log("done");
+    });
+
   }, 10);
+
+  function pauseRound() {
+  // clearInterval
+  // save value in the timer
+  // save phase
+
+
+
+  // change display to paused + the stored time
+  };
 }
 
-function pauseRound(roundIndex, phase) {
-// save value in the timer
-// save phase
-// clearInterval
-// change display to paused + the stored time
+function pauseRound() {
+  // clearInterval
+  // save value in the timer
+  // save phase
+  clearInterval(timer)
+  let savedPhase = phaseDisplay.innerText
+  let savedCount = timerDisplay.innerText
+  console.log(round)
+
+  // change display to paused + the stored time
 }
 
 function resumeRound(roundIndex, phase, pausedTime) {
