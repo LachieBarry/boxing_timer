@@ -25,6 +25,8 @@ const pauseButton = document.querySelector("#pause");
 const resumeButton = document.querySelector("#resume");
 const resetButton = document.querySelector("#reset");
 const resetAllButton = document.querySelector("#reset-all");
+
+let state = ""
 </script>
 
 
@@ -33,13 +35,16 @@ const resetAllButton = document.querySelector("#reset-all");
 
 
 function runRound(roundIndex, phase, countStart) {
+  let state = ""
   const round = allRounds[roundIndex];
-
-
+  const comboSpeech = new SpeechSynthesisUtterance();
+  const restSpeech = new SpeechSynthesisUtterance();
 
   countStart === 0 ? (count = ((phase === 'work') ? round.work_time * 100 : round.rest_time * 100)) : count = countStart;
 
-
+  restSpeech.text = "rest"
+  comboSpeech.text = `${round.combo}`;
+  phase === "work" ? window.speechSynthesis.speak(comboSpeech) : window.speechSynthesis.speak(restSpeech);
 
   let timer = setInterval(function() {
     let progress = (phase === 'work') ? (count / round.work_time).toFixed(2) : (count / round.rest_time).toFixed(2);
@@ -60,14 +65,18 @@ function runRound(roundIndex, phase, countStart) {
       // Move to the next phase or round if available
       if (phase === 'work') {
         if (roundIndex !== allRounds.length - 1) {
-        setTimeout(() => runRound(roundIndex, 'rest'), 10); // Start resting after 1000ms (adjust as needed)
+          setTimeout(() => runRound(roundIndex, 'rest', 0), 10); // Start resting after 1000ms (adjust as needed)
         }
       } else {
         if (roundIndex < allRounds.length - 1) {
-          setTimeout(() => runRound(roundIndex + 1, 'work'), 10); // Start working after 1000ms (adjust as needed)
+          setTimeout(() => runRound(roundIndex + 1, 'work', 0), 10); // Start working after 1000ms (adjust as needed)
         }
       }
     }
+
+    if (state === "paused") {
+      clearInterval(timer);
+    };
 
 
 
@@ -100,32 +109,33 @@ resumeButton.addEventListener("click", (event) => {
   });
 
 startButton.addEventListener("click", (event) => {
+  let state = "paused"
   console.log("clicked");
-  const msg = new SpeechSynthesisUtterance();
-  msg.text = "start";
-  window.speechSynthesis.speak(msg);
-  
   runRound(0, 'work', 0);
   startButton.classList.toggle("hide")
   console.log("done");
 });
 
-  resetButton.addEventListener("click", (event) => {
-    console.log("clicked");
+resetButton.addEventListener("click", (event) => {
+  let state = "paused"
+  clearInterval(timer);
+  console.log("clicked");
 
-    let roundStart = document.querySelector("#round-hidden").innerText;
-    let phaseStart = document.querySelector("#phase").innerText;
+  let roundStart = parseInt(document.querySelector("#round-hidden").innerText);
+  let phaseStart = document.querySelector("#phase").innerText;
 
-    clearInterval(timer);
-    runRound(roundStart, phaseStart, 0);
-    console.log("done");
-  });
+  roundDisplay.innerText = `Round ${roundStart + 1}`;
 
-  resetAllButton.addEventListener("click", (event) => {
-    clearInterval(timer);
-    runRound(0, 'work', 0);
-    console.log("done");
-  });
+  runRound(roundStart, phaseStart, 0);
+  console.log("done");
+});
+
+resetAllButton.addEventListener("click", (event) => {
+  let state = "paused"
+  clearInterval(timer);
+  runRound(0, 'work', 0);
+  console.log("done");
+});
 
 
 </script>
