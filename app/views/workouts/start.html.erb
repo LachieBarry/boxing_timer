@@ -1,8 +1,9 @@
 <button id="start" type="button">Start!</button>
-<button id="pause" type="button">Pause!</button>
-<button id="resume" type="button">Resume!</button>
-<button id="reset" type="button">Reset Round!</button>
-<button id="reset-all" type="button">Reset Workout!</button>
+<button id="pause" type="button" class="hide">Pause!</button>
+<button id="resume" type="button" class="hide">Resume!</button>
+<button id="reset" type="button" class="hide">Reset Round!</button>
+<button id="reset-all" type="button" class="hide">Reset Workout!</button>
+<button id="reset-workout" type="button" class="hide">Reset Workout!</button>
 
 <div><p id="round-hidden" class="hide"> </p></div>
 <div><p id="round"> </p></div>
@@ -25,20 +26,31 @@ const pauseButton = document.querySelector("#pause");
 const resumeButton = document.querySelector("#resume");
 const resetButton = document.querySelector("#reset");
 const resetAllButton = document.querySelector("#reset-all");
+const resetWorkoutButton = document.querySelector("#reset-workout");
 
-let state = ""
 </script>
 
 
 <script>
 
+function toggleButtons() {
+  resetAllButton.classList.toggle("hide")
+  resetButton.classList.toggle("hide")
+  pauseButton.classList.toggle("hide")
+  resumeButton.classList.toggle("hide")
+};
 
+pauseButton.addEventListener("click", (event) => {
+      toggleButtons()
+  });
 
 function runRound(roundIndex, phase, countStart) {
-  let state = ""
   const round = allRounds[roundIndex];
   const comboSpeech = new SpeechSynthesisUtterance();
   const restSpeech = new SpeechSynthesisUtterance();
+
+  console.log(round);
+  console.log(roundIndex)
 
   countStart === 0 ? (count = ((phase === 'work') ? round.work_time * 100 : round.rest_time * 100)) : count = countStart;
 
@@ -47,8 +59,9 @@ function runRound(roundIndex, phase, countStart) {
   phase === "work" ? window.speechSynthesis.speak(comboSpeech) : window.speechSynthesis.speak(restSpeech);
 
   let timer = setInterval(function() {
+
     let progress = (phase === 'work') ? (count / round.work_time).toFixed(2) : (count / round.rest_time).toFixed(2);
-    let currentRound = round
+
 
     count--;
     roundDisplay.innerText = `Round ${roundIndex + 1}`;
@@ -58,14 +71,26 @@ function runRound(roundIndex, phase, countStart) {
     timerDisplay.innerText = (count / 100).toFixed(2);
     progressDisplay.innerText = `${progress}%`;
 
+
+
     if (count === 0) {
       clearInterval(timer);
       console.log(`Time's up for ${phase} phase!`);
+      console.log(round)
+      console.log(round.work_time)
+      console.log(roundIndex)
+      console.log(typeof roundIndex)
 
       // Move to the next phase or round if available
       if (phase === 'work') {
         if (roundIndex !== allRounds.length - 1) {
           setTimeout(() => runRound(roundIndex, 'rest', 0), 10); // Start resting after 1000ms (adjust as needed)
+        } else if (roundIndex === allRounds.length - 1) {
+          console.log("FINISHED")
+          phaseDisplay.innerText = "workout complete";
+          progressDisplay.innerText = "0%";
+          pauseButton.classList.toggle("hide")
+          resetWorkoutButton.classList.toggle("hide")
         }
       } else {
         if (roundIndex < allRounds.length - 1) {
@@ -74,52 +99,45 @@ function runRound(roundIndex, phase, countStart) {
       }
     }
 
-    if (state === "paused") {
+  pauseButton.addEventListener("click", (event) => {
       clearInterval(timer);
-    };
+  });
 
-
-
-
-    pauseButton.addEventListener("click", (event) => {
-      console.log("clicked");
-      console.log("clearing");
-      clearInterval(timer);
-      console.log("done");
-    });
   }, 10);
-
-
-
 
 }
 
 resumeButton.addEventListener("click", (event) => {
-    console.log("clicked");
+  console.log("clicked");
 
-    // need something to reset!
+  // need something to reset!
 
-    let roundStart = document.querySelector("#round-hidden").innerText;
-    let phaseStart = document.querySelector("#phase").innerText;
-    let countStart = document.querySelector("#timer").innerText * 100;
-    runRound(roundStart, phaseStart, countStart);
+  let roundStart = parseInt(document.querySelector("#round-hidden").innerText);
+  let phaseStart = document.querySelector("#phase").innerText;
+  let countStart = document.querySelector("#timer").innerText * 100;
+
+  toggleButtons()
+
+  runRound(roundStart, phaseStart, countStart);
 
 
-    console.log("resuming");
-  });
+  console.log(roundStart);
+  console.log(phaseStart);
+  console.log(countStart);
+
+  console.log("resuming");
+});
 
 startButton.addEventListener("click", (event) => {
-  let state = "paused"
   console.log("clicked");
   runRound(0, 'work', 0);
   startButton.classList.toggle("hide")
+  pauseButton.classList.toggle("hide")
   console.log("done");
 });
 
 resetButton.addEventListener("click", (event) => {
-  let state = "paused"
-  clearInterval(timer);
-  console.log("clicked");
+  toggleButtons()
 
   let roundStart = parseInt(document.querySelector("#round-hidden").innerText);
   let phaseStart = document.querySelector("#phase").innerText;
@@ -131,8 +149,14 @@ resetButton.addEventListener("click", (event) => {
 });
 
 resetAllButton.addEventListener("click", (event) => {
-  let state = "paused"
-  clearInterval(timer);
+  toggleButtons()
+  runRound(0, 'work', 0);
+  console.log("done");
+});
+
+resetWorkoutButton.addEventListener("click", (event) => {
+  pauseButton.classList.toggle("hide")
+  resetWorkoutButton.classList.toggle("hide")
   runRound(0, 'work', 0);
   console.log("done");
 });
