@@ -1,3 +1,51 @@
+// general utilities
 .hide {
   display: none;
+}
+
+// position utilities
+.center-x {
+  margin: 0 auto;
+  width: 50%;
+}
+
+.center-text {
+  text-align: center;
+}
+
+.flex {
+ display: flex;
+}
+
+.flex-column {
+  flex-direction: column;
+}
+
+.flex-row {
+  flex-direction: row;
+}
+
+// text utilities
+.secondary-text {
+  opacity: 0.5;
+}
+
+.font-64 {
+  font-size: 64px;
+}
+
+.font-56 {
+  font-size: 56px;
+}
+
+.font-48 {
+  font-size: 48px;
+}
+
+.font-32 {
+  font-size: 32px;
+}
+
+.font-24 {
+  font-size: 24px;
 }

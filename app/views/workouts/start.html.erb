@@ -1,16 +1,27 @@
-<button id="start" type="button">Start!</button>
-<button id="pause" type="button" class="hide">Pause!</button>
-<button id="resume" type="button" class="hide">Resume!</button>
-<button id="reset" type="button" class="hide">Reset Round!</button>
-<button id="reset-all" type="button" class="hide">Reset Workout!</button>
-<button id="reset-workout" type="button" class="hide">Reset Workout!</button>
-
 <div><p id="round-hidden" class="hide"> </p></div>
-<div><p id="round"> </p></div>
-<div><p id="combo"> </p></div>
-<div><p id="phase"> </p></div>
-<div><p id="timer"> </p></div>
-<div><p id="progress"> </p></div>
+<div class="center-x center-text" > <p class="font-64"> COMBO COUNTER </p></div>
+<div class="center-x center-text">
+  <div class="flex flex-column">
+
+    <div><p id="round" class="font-56"> Round 1 </p></div>
+    <div><p id="phase" class="secondary-text font-32"> -- </p></div>
+
+    <div><p id="round-time" class="secondary-text font-32"> <%= @rounds[0].work_time %> </p></div>
+    <div><p id="timer" class="font-56"> <%= @rounds[0].work_time %> </p></div>
+    <div><p id="progress" class="secondary-text font-32"> -- </p></div>
+
+    <div><p id="combo" class="font-48"> <%= @rounds[0].combo %> </p></div>
+
+    <div class="flex-row">
+      <button id="start" type="button">Start!</button>
+      <button id="pause" type="button" class="hide">Pause!</button>
+      <button id="resume" type="button" class="hide">Resume!</button>
+      <button id="reset" type="button" class="hide">Reset!</button>
+      <button id="reset-all" type="button" class="hide">Restart!</button>
+      <button id="reset-workout" type="button" class="hide">Reset Workout!</button>
+    </div>
+  </div>
+</div>
 
 <script>
 const allRounds = <%= raw @rounds.to_json %>;
