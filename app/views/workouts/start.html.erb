@@ -1,0 +1,173 @@
+<button id="start" type="button">Start!</button>
+<button id="pause" type="button" class="hide">Pause!</button>
+<button id="resume" type="button" class="hide">Resume!</button>
+<button id="reset" type="button" class="hide">Reset Round!</button>
+<button id="reset-all" type="button" class="hide">Reset Workout!</button>
+<button id="reset-workout" type="button" class="hide">Reset Workout!</button>
+
+<div><p id="round-hidden" class="hide"> </p></div>
+<div><p id="round"> </p></div>
+<div><p id="combo"> </p></div>
+<div><p id="phase"> </p></div>
+<div><p id="timer"> </p></div>
+<div><p id="progress"> </p></div>
+
+<script>
+const allRounds = <%= raw @rounds.to_json %>;
+const roundDisplay = document.querySelector("#round");
+const roundIndexHidden = document.querySelector("#round-hidden");
+const timerDisplay = document.querySelector("#timer");
+const phaseDisplay = document.querySelector("#phase");
+const comboDisplay = document.querySelector("#combo");
+const progressDisplay = document.querySelector("#progress");
+
+const startButton = document.querySelector("#start");
+const pauseButton = document.querySelector("#pause");
+const resumeButton = document.querySelector("#resume");
+const resetButton = document.querySelector("#reset");
+const resetAllButton = document.querySelector("#reset-all");
+const resetWorkoutButton = document.querySelector("#reset-workout");
+
+</script>
+
+
+<script>
+
+function toggleButtons() {
+  resetAllButton.classList.toggle("hide")
+  resetButton.classList.toggle("hide")
+  pauseButton.classList.toggle("hide")
+  resumeButton.classList.toggle("hide")
+};
+
+pauseButton.addEventListener("click", (event) => {
+      toggleButtons()
+  });
+
+function runRound(roundIndex, phase, countStart) {
+  const round = allRounds[roundIndex];
+  const comboSpeech = new SpeechSynthesisUtterance();
+  const restSpeech = new SpeechSynthesisUtterance();
+  const finishSpeech = new SpeechSynthesisUtterance();
+
+  console.log(round);
+  console.log(roundIndex)
+
+  countStart === 0 ? (count = ((phase === 'work') ? round.work_time * 100 : round.rest_time * 100)) : count = countStart;
+
+  finishSpeech.text = "Workout Complete!"
+  restSpeech.text = "rest"
+  comboSpeech.text = `${round.combo}`;
+  phase === "work" ? window.speechSynthesis.speak(comboSpeech) : window.speechSynthesis.speak(restSpeech);
+
+  let timer = setInterval(function() {
+
+    let progress = (phase === 'work') ? (count / round.work_time).toFixed(2) : (count / round.rest_time).toFixed(2);
+
+
+    count--;
+    roundDisplay.innerText = `Round ${roundIndex + 1}`;
+    roundIndexHidden.innerText = roundIndex;
+    comboDisplay.innerText = round.combo;
+    phaseDisplay.innerText = phase;
+    timerDisplay.innerText = (count / 100).toFixed(2);
+    progressDisplay.innerText = `${progress}%`;
+
+
+
+    if (count === 0) {
+      clearInterval(timer);
+      console.log(`Time's up for ${phase} phase!`);
+      console.log(round)
+      console.log(round.work_time)
+      console.log(roundIndex)
+      console.log(typeof roundIndex)
+
+      // Move to the next phase or round if available
+      if (phase === 'work') {
+        if (roundIndex !== allRounds.length - 1) {
+          setTimeout(() => runRound(roundIndex, 'rest', 0), 10); // Start resting after 1000ms (adjust as needed)
+        } else if (roundIndex === allRounds.length - 1) {
+          console.log("FINISHED")
+          window.speechSynthesis.speak(finishSpeech)
+          phaseDisplay.innerText = "workout complete";
+          progressDisplay.innerText = "0%";
+          pauseButton.classList.toggle("hide")
+          resetWorkoutButton.classList.toggle("hide")
+        }
+      } else {
+        if (roundIndex < allRounds.length - 1) {
+          setTimeout(() => runRound(roundIndex + 1, 'work', 0), 10); // Start working after 1000ms (adjust as needed)
+        }
+      }
+    }
+
+  pauseButton.addEventListener("click", (event) => {
+      clearInterval(timer);
+  });
+
+  }, 10);
+
+}
+
+resumeButton.addEventListener("click", (event) => {
+  console.log("clicked");
+
+  // need something to reset!
+
+  let roundStart = parseInt(document.querySelector("#round-hidden").innerText);
+  let phaseStart = document.querySelector("#phase").innerText;
+  let countStart = document.querySelector("#timer").innerText * 100;
+
+  toggleButtons()
+
+  runRound(roundStart, phaseStart, countStart);
+
+
+  console.log(roundStart);
+  console.log(phaseStart);
+  console.log(countStart);
+
+  console.log("resuming");
+});
+
+startButton.addEventListener("click", (event) => {
+  console.log("clicked");
+  runRound(0, 'work', 0);
+  startButton.classList.toggle("hide")
+  pauseButton.classList.toggle("hide")
+  console.log("done");
+});
+
+resetButton.addEventListener("click", (event) => {
+  toggleButtons()
+
+  let roundStart = parseInt(document.querySelector("#round-hidden").innerText);
+  let phaseStart = document.querySelector("#phase").innerText;
+
+  roundDisplay.innerText = `Round ${roundStart + 1}`;
+
+  runRound(roundStart, "work", 0);
+  console.log("done");
+});
+
+resetAllButton.addEventListener("click", (event) => {
+  toggleButtons()
+  runRound(0, 'work', 0);
+  console.log("done");
+});
+
+resetWorkoutButton.addEventListener("click", (event) => {
+  pauseButton.classList.toggle("hide")
+  resetWorkoutButton.classList.toggle("hide")
+  runRound(0, 'work', 0);
+  console.log("done");
+});
+
+
+</script>
+          <%# const comboNames = new Array() %>
+
+      <%# <% @rounds.each do |round| %>
+        <%# comboNames.push( <%= round.combo %>
+      <%# <% end %>
