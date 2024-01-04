@@ -1,19 +1,35 @@
-<button id="start" type="button">Start!</button>
-<button id="pause" type="button" class="hide">Pause!</button>
-<button id="resume" type="button" class="hide">Resume!</button>
-<button id="reset" type="button" class="hide">Reset Round!</button>
-<button id="reset-all" type="button" class="hide">Reset Workout!</button>
-<button id="reset-workout" type="button" class="hide">Reset Workout!</button>
-
 <div><p id="round-hidden" class="hide"> </p></div>
-<div><p id="round"> </p></div>
-<div><p id="combo"> </p></div>
-<div><p id="phase"> </p></div>
-<div><p id="timer"> </p></div>
-<div><p id="progress"> </p></div>
+<div class="center-x center-text" > <p id="title" class="font-64 text-hover-red"> COMBO COUNTER </p></div>
+<div class="center-x center-text">
+  <div class="flex flex-column">
+
+    <div><p id="round" class="font-56"> Round 1 </p></div>
+    <div><p id="phase" class="secondary-text font-32"> -- </p></div>
+
+    <div><p id="round-time" class="secondary-text font-32"> <%= @rounds[0].work_time %> </p></div>
+    <div><p id="timer" class="font-56"> <%= @rounds[0].work_time %> </p></div>
+    <div><p id="progress" class="secondary-text font-32"> -- </p></div>
+
+    <div class="border-faint">
+      <div class="progress progress-red" id="progressBar"></div>
+    </div>
+
+    <div><p id="combo" class="font-48"> <%= @rounds[0].combo %> </p></div>
+
+    <div class="flex-row">
+      <button id="start" type="button">Start!</button>
+      <button id="pause" type="button" class="hide">Pause!</button>
+      <button id="resume" type="button" class="hide">Resume!</button>
+      <button id="reset" type="button" class="hide">Reset!</button>
+      <button id="reset-all" type="button" class="hide">Restart!</button>
+      <button id="reset-workout" type="button" class="hide">Reset Workout!</button>
+    </div>
+  </div>
+</div>
 
 <script>
 const allRounds = <%= raw @rounds.to_json %>;
+const title = document.querySelector("#title");
 const roundDisplay = document.querySelector("#round");
 const roundIndexHidden = document.querySelector("#round-hidden");
 const timerDisplay = document.querySelector("#timer");
@@ -33,6 +49,21 @@ const resetWorkoutButton = document.querySelector("#reset-workout");
 
 <script>
 
+
+
+function colourBlue() {
+  progressBar.classList.remove("progress-red")
+  title.classList.remove("text-hover-red")
+  progressBar.classList.add("progress-blue")
+  title.classList.add("text-hover-blue")
+}
+function colourRed() {
+  progressBar.classList.add("progress-red")
+  title.classList.add("text-hover-red")
+  progressBar.classList.remove("progress-blue")
+  title.classList.remove("text-hover-blue")
+}
+
 function toggleButtons() {
   resetAllButton.classList.toggle("hide")
   resetButton.classList.toggle("hide")
@@ -50,6 +81,11 @@ function runRound(roundIndex, phase, countStart) {
   const restSpeech = new SpeechSynthesisUtterance();
   const finishSpeech = new SpeechSynthesisUtterance();
 
+  function updateProgress(newValue) {
+    progressBar.value = newValue;
+    progressBar.getElementsById('progressBarSpan')[0].textContent = newValue;
+  }
+
   console.log(round);
   console.log(roundIndex)
 
@@ -62,16 +98,19 @@ function runRound(roundIndex, phase, countStart) {
 
   let timer = setInterval(function() {
 
-    let progress = (phase === 'work') ? (count / round.work_time).toFixed(2) : (count / round.rest_time).toFixed(2);
+    let progress = (phase === 'work') ? (count / round.work_time).toFixed(1) : (count / round.rest_time).toFixed(1);
+    const progressBar = document.getElementById('progressBar');
 
+    (phase === 'work') ? colourRed() : colourBlue();
 
     count--;
     roundDisplay.innerText = `Round ${roundIndex + 1}`;
     roundIndexHidden.innerText = roundIndex;
     comboDisplay.innerText = round.combo;
     phaseDisplay.innerText = phase;
-    timerDisplay.innerText = (count / 100).toFixed(2);
+    timerDisplay.innerText = (count / 100).toFixed(1);
     progressDisplay.innerText = `${progress}%`;
+    progressBar.style.width = `${progress}%`;
 
 
 
